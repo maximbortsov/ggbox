@@ -1,0 +1,12 @@
+import { IsString, MaxLength, MinLength } from 'class-validator'
+import { Expose } from 'class-transformer'
+
+
+export class CreateGameDataDto {
+
+    @Expose()
+    @IsString()
+    @MinLength(3)
+    @MaxLength(128)
+    name: string
+}

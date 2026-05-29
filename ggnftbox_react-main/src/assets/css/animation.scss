@@ -1,0 +1,137 @@
+@keyframes firstDivMove {
+  0% {
+    transform: translate(-100%, -5px)
+  }
+  12.5% {
+    transform: translate(-100%, calc(100% + 5px))
+  }
+  25% {
+    transform: translate(0, 200%)
+  }
+  37.5% {
+    transform: translate(calc(100% + 5px), 200%)
+  }
+  50% {
+    transform: translate(calc(200% - 2px), 100%)
+  }
+  62.5% {
+    transform: translate(calc(200% - 2px), -5px)
+  }
+  75% {
+    transform: translate(100%, -100%)
+  }
+  87.5% {
+    transform: translate(0, -100%)
+  }
+  100% {
+    transform: translate(-100%, -5px)
+  }
+}
+
+@keyframes secondDivMove {
+  0% {
+    transform: translate(0, 200%)
+  }
+  12.5% {
+    transform: translate(calc(100% + 5px), 200%)
+  }
+  25% {
+    transform: translate(calc(200% - 2px), 100%)
+  }
+  37.5% {
+    transform: translate(calc(200% - 2px), -5px)
+  }
+  50% {
+    transform: translate(100%, -100%)
+  }
+  62.5% {
+    transform: translate(0, -100%)
+  }
+  75% {
+    transform: translate(-100%, -5px)
+  }
+  87.5% {
+    transform: translate(-100%, calc(100% + 5px))
+  }
+  100% {
+    transform: translate(0, 200%)
+  }
+}
+
+@keyframes thirdDivMove {
+  0% {
+    transform: translate(calc(200% - 2px), 100%)
+  }
+  12.5% {
+    transform: translate(calc(200% - 2px), -5px)
+  }
+  25% {
+    transform: translate(100%, -100%)
+  }
+  37.5% {
+    transform: translate(0, -100%)
+  }
+  50% {
+    transform: translate(-100%, -5px)
+  }
+  62.5% {
+    transform: translate(-100%, calc(100% + 5px))
+  }
+  75% {
+    transform: translate(0, 200%)
+  }
+  87.5% {
+    transform: translate(calc(100% + 5px), 200%)
+  }
+  100% {
+    transform: translate(calc(200% - 2px), 100%)
+  }
+}
+
+@keyframes fourDivMove {
+  0% {
+    transform: translate(100%, -100%)
+  }
+  12.5% {
+    transform: translate(0, -100%)
+  }
+  25% {
+    transform: translate(-100%, -5px)
+  }
+  37.5% {
+    transform: translate(-100%, calc(100% + 5px))
+  }
+  50% {
+    transform: translate(0, 200%)
+  }
+  62.5% {
+    transform: translate(calc(100% + 5px), 200%)
+  }
+  75% {
+    transform: translate(calc(200% - 2px), 100%)
+  }
+  87.5% {
+    transform: translate(calc(200% - 2px), -5px)
+  }
+  100% {
+    transform: translate(100%, -100%)
+  }
+}
+
+@keyframes logoMove {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(0, 10px);
+  }
+  50% {
+    transform: translate(0, 0);
+  }
+  75% {
+    transform: translate(0, -10px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}

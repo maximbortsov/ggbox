@@ -1,0 +1,17 @@
+export enum Pages {
+    MAIN = '/',
+    PROFILE = '/profile',
+    MARKETPLACE = '/marketplace',
+    BOXES = '/boxes',
+    PURCHASED_BOXES = '/purchasedBoxes',
+    DEPOSIT = '/deposit',
+    ABOUT_US = '/aboutus',
+    AUTH = '/signin',
+    SIGN_UP = '/signup',
+    RESET_PASSWORD = '/resetPassword',
+    SET_NEW_PASSWORD = '/resetPassword/new',
+    ADMIN_PANEL = '/admin',
+    VERIFY_EMAIL = '/verifyEmail',
+    PAYMENT_SUMMARY = '/paymentSummary',
+    TERMS_OF_SERVICE = '/tos',
+}

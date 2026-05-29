@@ -1,0 +1,251 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Agreement {
+  id String @id @default(uuid()) @db.Uuid
+
+  email      String @db.VarChar(256)
+  fullName   String @db.VarChar(1000)
+  twitchLink String @db.VarChar(512)
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model Game {
+  id String @id @default(uuid()) @db.Uuid
+
+  name String  @unique @db.VarChar(128)
+  logo String? @db.VarChar(512)
+
+  plays Play[]
+}
+
+model Tag {
+  id String @id @default(uuid()) @db.Uuid
+
+  name String @unique @db.VarChar(64)
+
+  boxes Box[]
+  plays Play[]
+}
+
+model User {
+  id String @id @default(uuid()) @db.Uuid
+
+  roles      String[]
+  username   String   @unique @db.VarChar(128)
+  avatar     String?  @db.VarChar(512)
+  flowWallet String   @unique @db.VarChar(64)
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  payments      Payment[]
+  paymentTokens PaymentToken[]
+  nfts          Nft[]
+  streamers     Streamer[]
+  boughtLots    Lot[]          @relation(name: "boughtLots")
+  soldLots      Lot[]          @relation(name: "soldLots")
+  boxTokens     BoxToken[]
+}
+
+model Payment {
+  id String @id @default(uuid()) @db.Uuid
+
+  amount Float
+  status String @db.VarChar(128)
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @db.Uuid
+
+  box   Box?    @relation(fields: [boxId], references: [id])
+  boxId String? @db.Uuid
+}
+
+model PaymentToken {
+  id String @id @default(uuid()) @db.Uuid
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @db.Uuid
+
+  box   Box?    @relation(fields: [boxId], references: [id])
+  boxId String? @db.Uuid
+}
+
+model Streamer {
+  id String @id @default(uuid()) @db.Uuid
+
+  desc       String? @db.VarChar(256)
+  name       String  @unique @db.VarChar(256)
+  twitchLink String? @db.VarChar(512)
+
+  plays Play[]
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @db.Uuid
+}
+
+model Box {
+  id String @id @default(uuid()) @db.Uuid
+
+  name            String   @db.VarChar(256)
+  size            Int
+  price           Float
+  desc            String   @db.VarChar(256)
+  thumbnail       String   @db.VarChar(512)
+  openVideo       String   @db.VarChar(512)
+  openMobileVideo String   @db.VarChar(512)
+  startSaleAt     DateTime
+  endSaleAt       DateTime
+
+  createdAt DateTime @default(now())
+
+  nfts          Nft[]
+  tags          Tag[]
+  payments      Payment[]
+  paymentTokens PaymentToken[]
+  boxTokens     BoxToken[]
+}
+
+model BoxToken {
+  id String @id @default(uuid()) @db.Uuid
+
+  isOpen    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  nfts Nft[]
+
+  user   User   @relation(fields: [userID], references: [id])
+  userID String @db.Uuid
+
+  box   Box    @relation(fields: [boxID], references: [id])
+  boxID String @db.Uuid
+}
+
+model Play {
+  id String @id @default(uuid()) @db.Uuid
+
+  name     String @db.VarChar(256)
+  desc     String @db.VarChar(512)
+  cid      String @db.VarChar(512)
+  metadata Json   @db.JsonB
+
+  createdAt DateTime
+
+  flowId        Decimal @unique @db.Decimal(20, 0)
+  transactionId String  @db.VarChar(64)
+
+  sets     Set[]
+  editions Edition[]
+  tags     Tag[]
+
+  game   Game   @relation(fields: [gameId], references: [id])
+  gameId String @db.Uuid
+
+  streamer   Streamer? @relation(fields: [streamerId], references: [id])
+  streamerId String?   @db.Uuid
+}
+
+model Set {
+  id String @id @default(uuid()) @db.Uuid
+
+  flowId        Decimal @unique @db.Decimal(20, 0)
+  transactionId String  @db.VarChar(64)
+
+  name String @unique @db.VarChar(256)
+
+  setPlaysInEditions Json @default("{}") @db.JsonB
+
+  createdAt DateTime
+
+  plays    Play[]
+  editions Edition[]
+}
+
+model Edition {
+  id String @id @default(uuid()) @db.Uuid
+
+  flowId        Decimal @unique @db.Decimal(20, 0)
+  flowSetId     Decimal @db.Decimal(20, 0)
+  flowPlayId    Decimal @db.Decimal(20, 0)
+  transactionId String  @db.VarChar(64)
+
+  name        String   @db.VarChar(256)
+  rarity      String   @db.VarChar(256)
+  maxMintSize Decimal? @db.Decimal(20, 0)
+
+  createdAt DateTime
+
+  nfts Nft[]
+
+  set   Set    @relation(fields: [setID], references: [id])
+  setID String @db.Uuid
+
+  play   Play   @relation(fields: [playId], references: [id])
+  playId String @db.Uuid
+}
+
+model Nft {
+  id String @id @default(uuid()) @db.Uuid
+
+  flowID        Decimal  @unique @db.Decimal(20, 0)
+  flowEditionID Decimal  @db.Decimal(20, 0)
+  serialNumber  Decimal  @db.Decimal(20, 0)
+  mintingDate   DateTime
+
+  metadata Json @db.JsonB
+
+  transactionID String @db.VarChar(64)
+
+  lots Lot[]
+
+  owner   User?   @relation(fields: [ownerID], references: [id])
+  ownerID String? @db.Uuid
+
+  edition   Edition @relation(fields: [editionID], references: [id])
+  editionID String  @db.Uuid
+
+  box   Box?    @relation(fields: [boxID], references: [id])
+  boxID String? @db.Uuid
+
+  boxToken   BoxToken? @relation(fields: [boxTokenID], references: [id])
+  boxTokenID String?   @db.Uuid
+}
+
+model Lot {
+  id String @id @default(uuid()) @db.Uuid
+
+  price  Decimal   @db.Decimal(20, 8)
+  soldAt DateTime?
+
+  flowNftId Decimal @db.Decimal(20, 0)
+
+  updatedAt DateTime
+  createdAt DateTime
+
+  transactionID         String  @db.VarChar(64)
+  purchaseTransactionID String? @db.VarChar(64)
+
+  nft   Nft    @relation(fields: [nftId], references: [id])
+  nftId String @db.Uuid
+
+  buyer   User?   @relation(name: "boughtLots", fields: [buyerId], references: [id])
+  buyerId String? @db.Uuid
+
+  seller   User   @relation(name: "soldLots", fields: [sellerId], references: [id])
+  sellerId String @db.Uuid
+}

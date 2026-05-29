@@ -1,0 +1,38 @@
+{
+  "name": "flow-token",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "test": "jest",
+    "emul:deploy": "flow project deploy",
+    "emul:start": "flow emulator --contracts"
+  },
+  "dependencies": {
+    "@onflow/fcl": "^0.0.78",
+    "@onflow/sdk": "0.0.43",
+    "dotenv": "^8.2.0",
+    "elliptic": "^6.5.3",
+    "sha3": "^2.1.3",
+    "typescript": "^4.1.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.9",
+    "@babel/preset-env": "^7.16.11",
+    "@onflow/types": "^0.0.6",
+    "@types/node": "^14.14.20",
+    "babel-jest": "^27.5.1",
+    "flow-js-testing": "^0.2.3-alpha.5",
+    "jest": "^27.5.1",
+    "jest-environment-node": "^27.5.1",
+    "prettier": "^2.2.1",
+    "ts-node-dev": "^1.1.1"
+  },
+  "main": "jest.config.js",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [],
+  "author": "",
+  "description": ""
+}

@@ -1,37 +1,39 @@
-# FIRST STAGE
+# Build legacy NestJS API on Node 20 LTS. Node 24 is not compatible with the old Nest CLI.
+FROM node:20.20.2-bookworm-slim AS builder
 
-FROM node:16.15.1-alpine as builder
-
-ENV NODE_ENV build
-
+ENV NODE_ENV=development
 WORKDIR /usr/src/app
 
-COPY package*.json ./
-COPY yarn.lock ./
+COPY package.json yarn.lock .yarnrc.yml ./
 COPY .yarn/ ./.yarn/
-COPY .yarnrc.yml ./
 
-RUN yarn install
+RUN corepack enable && yarn install --immutable
 
 COPY ./ ./
 
-RUN yarn prod-install /usr/src/build
-RUN yarn run prisma generate
+RUN yarn prisma:generate
 RUN yarn build
 
-RUN cp -r dist/ /usr/src/build/dist/
+FROM node:20.20.2-bookworm-slim AS prod
 
-# SECOND STAGE
-FROM node:16.15.1-alpine AS prod
-
-ENV NODE_ENV production
-
+ENV NODE_ENV=production
 WORKDIR /usr/src/app
 
-COPY cadence/ ./cadence/
-COPY prisma/ ./prisma/
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends openssl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /usr/src/build/ ./
-COPY --from=builder /usr/src/app/node_modules/.prisma/ ./node_modules/.prisma/
+COPY --from=builder /usr/src/app/package.json ./package.json
+COPY --from=builder /usr/src/app/yarn.lock ./yarn.lock
+COPY --from=builder /usr/src/app/.yarnrc.yml ./.yarnrc.yml
+COPY --from=builder /usr/src/app/.yarn/ ./.yarn/
+COPY --from=builder /usr/src/app/node_modules/ ./node_modules/
+COPY --from=builder /usr/src/app/dist/ ./dist/
+COPY --from=builder /usr/src/app/cadence/ ./cadence/
+COPY --from=builder /usr/src/app/prisma/ ./prisma/
 
-CMD ["yarn", "start:prod"]
+RUN mkdir -p files
+
+EXPOSE 3000
+
+CMD ["sh", "-c", "yarn db:migrate-up && yarn start:prod"]

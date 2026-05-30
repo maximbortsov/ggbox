@@ -2,11 +2,13 @@ import path from 'path';
 // import CopyWebpackPlugin from 'copy-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
-import * as Webpack from 'webpack';
+import webpack from 'webpack';
 import * as WebpackDevServer from 'webpack-dev-server';
 
-type DevConfig = Webpack.Configuration &
+type DevConfig = webpack.Configuration &
     { devServer?: WebpackDevServer.Configuration | undefined }
+
+const devServerPort = Number(process.env.DEV_SERVER_PORT ?? process.env.PORT) || 8080
 
 const config: DevConfig = {
     mode: 'development',
@@ -21,7 +23,7 @@ const config: DevConfig = {
     devServer: {
         static: path.join(__dirname, 'build'),
         historyApiFallback: true,
-        port: 3000,
+        port: devServerPort,
         open: true,
         hot: true,
     },
@@ -39,6 +41,11 @@ const config: DevConfig = {
                                 '@babel/preset-env',
                                 '@babel/preset-react',
                                 '@babel/preset-typescript',
+                            ],
+                            plugins: [
+                                ['@babel/plugin-proposal-class-properties', { loose: true }],
+                                ['@babel/plugin-proposal-private-methods', { loose: true }],
+                                ['@babel/plugin-proposal-private-property-in-object', { loose: true }],
                             ],
                         },
                     }],
@@ -77,6 +84,9 @@ const config: DevConfig = {
         }),
         new ForkTsCheckerWebpackPlugin({
             async: false,
+        }),
+        new webpack.DefinePlugin({
+            'process.env.REACT_APP_API_SOURCE': JSON.stringify(process.env.REACT_APP_API_SOURCE ?? 'http://localhost:3000'),
         }),
     ],
 };

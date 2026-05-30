@@ -1,5 +1,5 @@
 import * as path from 'path'
-import { Configuration } from 'webpack'
+import webpack, { Configuration } from 'webpack'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
 import { CleanWebpackPlugin } from 'clean-webpack-plugin'
@@ -25,6 +25,11 @@ const config: Configuration = {
                             '@babel/preset-env',
                             '@babel/preset-react',
                             '@babel/preset-typescript',
+                        ],
+                        plugins: [
+                            ['@babel/plugin-proposal-class-properties', { loose: true }],
+                            ['@babel/plugin-proposal-private-methods', { loose: true }],
+                            ['@babel/plugin-proposal-private-property-in-object', { loose: true }],
                         ],
                     },
                 },
@@ -65,6 +70,9 @@ const config: Configuration = {
             async: false,
         }),
         new CleanWebpackPlugin(),
+        new webpack.DefinePlugin({
+            'process.env.REACT_APP_API_SOURCE': JSON.stringify(process.env.REACT_APP_API_SOURCE ?? 'http://localhost:3000'),
+        }),
     ],
 }
 
